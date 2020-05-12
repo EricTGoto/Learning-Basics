@@ -4,17 +4,19 @@ public class ShellSort {
 
     public static void sort(int[] a) {
         int length = a.length;
-        int h = (length / 3) * 3 + 1; //dividing by 3 and then multiplying may look redundant but h is an integer
 
-        for (int z = h; z >= 1; z -= 3) {
-            for (int i = 0; i < length; i++) {
-                for (int k = i + z; k < length; k += z) {
-                    for (int r = k; r - z >= 0; r -= z) {
-                        if (a[r] < a[r - z]) exch(a, r, r - z);
-                    }
+        int h = 1;
+        while (h * 3 + 1 < length) h = h * 3 + 1; //calculates the biggest possible value of h
+
+        for (int z = h; z >= 1; z /= 3) {
+            for (int i = z; i < length; i++) {
+                for (int k = i; k >= h && a[k] < a[k - z]; k -= z) {
+                    exch(a, k, k - z);
                 }
             }
+            h /= 3;
         }
+
     }
 
     public static void exch(int[] a, int i, int k) {
