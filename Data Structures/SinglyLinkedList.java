@@ -20,10 +20,12 @@ public class SinglyLinkedList {
         head.next = oldHead;
     }
 
+    //removes head from list and returns it
     public Node removeHead() {
-        Node oldHead = head;
-        head = head.next;
-        return oldHead;
+        if (head == null) {
+            return null;
+        }
+        return head.next;
     }
 
     public static void main(String[] args) {
