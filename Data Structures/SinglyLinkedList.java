@@ -14,10 +14,11 @@ public class SinglyLinkedList {
 
     }
 
-    public void add(String data) {
-        Node oldHead = head;
-        head = new Node(data);
-        head.next = oldHead;
+    // insert a node at the head of a list and return the new head
+    public Node add(String data) {
+        Node newNode = new Node(data);
+        newNode.next = head;
+        return newNode;
     }
 
     //removes head from list and returns new head
