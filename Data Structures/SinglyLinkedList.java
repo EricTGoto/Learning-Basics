@@ -16,19 +16,29 @@ public class SinglyLinkedList {
 
     public void add(String data) {
         Node oldHead = head;
-        head = new Node("data");
+        head = new Node(data);
         head.next = oldHead;
+    }
+
+    public Node removeHead() {
+        Node oldHead = head;
+        head = head.next;
+        return oldHead;
     }
 
     public static void main(String[] args) {
         SinglyLinkedList list = new SinglyLinkedList();
-        list.head = new Node("head");
+        list.head = new Node("first");
         list.add("second");
 
-
-        while (list.head != null) {
-            System.out.print(list.head.data + " ");
-            list.head = list.head.next;
+        Node clone = list.head;
+        while (clone != null) {
+            System.out.print(clone.data + " ");
+            clone = clone.next;
         }
+
+        System.out.print(list.removeHead().data);
+        System.out.print(list.removeHead().data);
+
     }
 }
