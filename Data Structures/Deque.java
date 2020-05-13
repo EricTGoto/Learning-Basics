@@ -1,4 +1,5 @@
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 // Implementation of a double ended queue
 public class Deque<Item> implements Iterable<Item> {
@@ -36,6 +37,44 @@ public class Deque<Item> implements Iterable<Item> {
             clone = clone.next;
         }
         return items;
+    }
+
+    public void addFirst(Item item) {
+        if (item == null) throw new IllegalArgumentException("Null item addition not supported");
+        Node newHead = new Node(item);
+        newHead.next = head;
+        head = newHead;
+    }
+
+    public void addLast(Item item) {
+        if (item == null) throw new IllegalArgumentException("Null item addition not supported");
+        Node newTail = new Node(item);
+        newTail.next = tail;
+        tail = newTail;
+    }
+
+    public Item removeFirst() {
+        if (this.size() == 0) throw new NoSuchElementException("The deque is empty");
+        else if (this.size() == 1) {
+            head = null;
+            tail = null;
+        } else {
+            Item temp = head.item;
+            head = head.next;
+            return temp;
+        }
+    }
+
+    public Item removeLast() {
+        if (this.size() == 0) throw new NoSuchElementException("The deque is empty");
+        else if (this.size() == 1) {
+            head = null;
+            tail = null;
+        } else {
+            Item item = tail.item;
+            tail = null;
+            return item;
+        }
     }
 
     @Override
