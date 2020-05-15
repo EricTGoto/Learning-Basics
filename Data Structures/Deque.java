@@ -1,14 +1,17 @@
 import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
 // Implementation of a double ended queue
 public class Deque<Item> implements Iterable<Item> {
     private Node head;
     private Node tail;
+    private int size;
 
     public Deque() {
         this.head = null;
         this.tail = null;
+        this.size = 0;
     }
 
     private class Node {
@@ -28,39 +31,50 @@ public class Deque<Item> implements Iterable<Item> {
     }
 
     public int size() {
-        if (head == null) return 0;
-        int items = 0;
-
-        Node clone = head;
-        while (clone != null) {
-            items++;
-            clone = clone.next;
-        }
-        return items;
+        return size;
     }
 
     public void addFirst(Item item) {
         if (item == null) throw new IllegalArgumentException("Null item addition not supported");
+
         Node newHead = new Node(item);
-        newHead.next = head;
-        head = newHead;
+        if (size() == 0) {
+            head = newHead;
+            tail = newHead;
+            size++;
+        } else {
+            newHead.next = head;
+            head = newHead;
+            size++;
+        }
     }
 
     public void addLast(Item item) {
         if (item == null) throw new IllegalArgumentException("Null item addition not supported");
         Node newTail = new Node(item);
-        newTail.next = tail;
-        tail = newTail;
+        if (size() == 0) {
+            tail = newTail;
+            head = newTail;
+            size++;
+        } else {
+            tail.next = newTail;
+            tail = newTail;
+            size++;
+        }
     }
 
     public Item removeFirst() {
         if (this.size() == 0) throw new NoSuchElementException("The deque is empty");
         else if (this.size() == 1) {
+            Item item = head.item;
             head = null;
             tail = null;
+            size--;
+            return item;
         } else {
             Item temp = head.item;
             head = head.next;
+            size--;
             return temp;
         }
     }
@@ -68,23 +82,95 @@ public class Deque<Item> implements Iterable<Item> {
     public Item removeLast() {
         if (this.size() == 0) throw new NoSuchElementException("The deque is empty");
         else if (this.size() == 1) {
+            Item item = head.item;
             head = null;
             tail = null;
+            size--;
+            return item;
         } else {
             Item item = tail.item;
             tail = null;
+            size--;
             return item;
         }
     }
 
     @Override
     public Iterator<Item> iterator() {
-        return null;
+        return new ListIterator<Item>() {
+            @Override
+            public boolean hasNext() {
+                return head != null;
+            }
+
+            @Override
+            public Item next() {
+                if (size == 0) throw new NoSuchElementException("List is empty");
+                return removeFirst();
+            }
+
+            @Override
+            public boolean hasPrevious() {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public Item previous() {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public int nextIndex() {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public int previousIndex() {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void set(Item item) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void add(Item item) {
+                throw new UnsupportedOperationException();
+            }
+        };
     }
 
     public static void main(String[] args) {
-        Deque d = new Deque();
+        Deque<String> d = new Deque<>();
         // check if size properly returns 0
-        System.out.print(d.size());
+        System.out.println(d.size());
+        // add two items into the list
+        d.addFirst("xd");
+        d.addFirst("LUL");
+        System.out.println("size: " + d.size()); // should print 2
+        d.addLast("hello");
+        d.addLast("ding");
+        d.addFirst("dong");
+        d.addFirst("ping");
+        d.addLast("pong");
+        System.out.println("size: " + d.size());
+        d.addFirst("jing");
+        d.removeFirst();
+        d.addLast("slam");
+        d.removeLast();
+        // this should print out ping dong LUL XD hello ding pong
+        for (String item : d) {
+            System.out.println(item);
+        }
+
+        // System.out.print(d.removeFirst()); if uncommented will produce NoSuchElementException
+
+
     }
 }
