@@ -14,6 +14,7 @@ public class Deque<Item> implements Iterable<Item> {
         this.size = 0;
     }
 
+    // node to create the linked list based data structure
     private class Node {
         Node next;
         Item item;
@@ -25,15 +26,18 @@ public class Deque<Item> implements Iterable<Item> {
 
     }
 
+    // checks if the deque is empty or not
     public boolean isEmpty() {
         if (head == null || tail == null) return true;
         return false;
     }
 
+    // returns the number of items in the deque
     public int size() {
         return size;
     }
 
+    // adds an item to the front of the queue
     public void addFirst(Item item) {
         if (item == null) throw new IllegalArgumentException("Null item addition not supported");
 
@@ -49,6 +53,7 @@ public class Deque<Item> implements Iterable<Item> {
         }
     }
 
+    // adds an item to the back of the queue
     public void addLast(Item item) {
         if (item == null) throw new IllegalArgumentException("Null item addition not supported");
         Node newTail = new Node(item);
@@ -63,6 +68,7 @@ public class Deque<Item> implements Iterable<Item> {
         }
     }
 
+    // removes and returns the item from the front
     public Item removeFirst() {
         if (this.size() == 0) throw new NoSuchElementException("The deque is empty");
         else if (this.size() == 1) {
@@ -79,6 +85,7 @@ public class Deque<Item> implements Iterable<Item> {
         }
     }
 
+    // removes and returns the item from the back
     public Item removeLast() {
         if (this.size() == 0) throw new NoSuchElementException("The deque is empty");
         else if (this.size() == 1) {
@@ -95,6 +102,7 @@ public class Deque<Item> implements Iterable<Item> {
         }
     }
 
+    // returns an iterator
     @Override
     public Iterator<Item> iterator() {
         return new ListIterator<Item>() {
@@ -168,7 +176,7 @@ public class Deque<Item> implements Iterable<Item> {
         for (String item : d) {
             System.out.println(item);
         }
-
+        System.out.println(d.isEmpty());
         // System.out.print(d.removeFirst()); if uncommented will produce NoSuchElementException
 
 
