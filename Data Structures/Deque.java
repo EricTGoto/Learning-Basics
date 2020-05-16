@@ -4,6 +4,7 @@ import java.util.NoSuchElementException;
 // Implementation of a double ended queue
 // problem from Princeton Coursera course "Algorithms part 1"
 // This implementation uses a doubly linked list. An array can also probably be used.
+// Written by Eric Goto, Mid April 2020
 public class Deque<Item> implements Iterable<Item> {
     private Node head;
     private Node tail;
@@ -15,7 +16,7 @@ public class Deque<Item> implements Iterable<Item> {
         this.size = 0;
     }
 
-    // node to create the linked list based data structure
+    // node class to create the linked-list based data structure
     // use a doubly linked list
     private class Node {
         Node next;
@@ -87,6 +88,7 @@ public class Deque<Item> implements Iterable<Item> {
         } else {
             Item temp = head.item;
             head = head.next;
+            head.before = null;
             size--;
             return temp;
         }
