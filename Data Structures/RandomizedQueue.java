@@ -1,4 +1,5 @@
 // a data structure similar to a queue or a stack but items are pulled out at random instead of in FIFO or FILO order
+// problem from Princeton Coursera "Algorithms part 1"
 
 import edu.princeton.cs.algs4.StdRandom;
 
@@ -61,7 +62,6 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         } else {
             int size = this.size();
             int num = StdRandom.uniform(size) + 1;
-            System.out.println(num);
             int index = 1;
             Node clone = head;
 
@@ -104,7 +104,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     }
 
     // return a random item without removing it
-    public Item Sample() {
+    public Item sample() {
         if (this.size() == 0) {
             throw new NoSuchElementException();
         } else if (this.size() == 1) {
@@ -151,9 +151,9 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         rq.enqueue("dong");
         rq.enqueue("1111");
         rq.enqueue("2222");
-        System.out.println(rq.Sample());
-        //System.out.println(rq.Sample());
-        //System.out.println(rq.Sample());
+        System.out.println(rq.sample());
+        //System.out.println(rq.sample());
+        //System.out.println(rq.sample());
         System.out.println(rq.dequeue());
         for (String string : rq) {
             System.out.println(string);
