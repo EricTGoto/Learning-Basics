@@ -1,10 +1,9 @@
 import java.util.Iterator;
-import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
 // Implementation of a double ended queue
 // problem from Princeton Coursera course "Algorithms part 1"
-
+// This implementation uses a doubly linked list. An array can also probably be used.
 public class Deque<Item> implements Iterable<Item> {
     private Node head;
     private Node tail;
@@ -113,53 +112,26 @@ public class Deque<Item> implements Iterable<Item> {
     // returns an iterator
     @Override
     public Iterator<Item> iterator() {
-        return new ListIterator<Item>() {
-            @Override
-            public boolean hasNext() {
-                return head != null;
-            }
+        return new listIterator();
+    }
 
-            @Override
-            public Item next() {
-                if (size == 0) throw new NoSuchElementException("List is empty");
-                return removeFirst();
-            }
+    private class listIterator implements Iterator<Item> {
+        @Override
+        public boolean hasNext() {
+            return head != null;
+        }
 
-            @Override
-            public boolean hasPrevious() {
-                throw new UnsupportedOperationException();
-            }
+        @Override
+        public Item next() {
+            if (size == 0) throw new NoSuchElementException("List is empty");
+            return removeFirst();
+        }
 
-            @Override
-            public Item previous() {
-                throw new UnsupportedOperationException();
-            }
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
 
-            @Override
-            public int nextIndex() {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public int previousIndex() {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public void set(Item item) {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public void add(Item item) {
-                throw new UnsupportedOperationException();
-            }
-        };
     }
 
     public static void main(String[] args) {
