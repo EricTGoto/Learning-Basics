@@ -3,7 +3,7 @@ import java.util.NoSuchElementException;
 
 // Implementation of a double ended queue
 // problem from Princeton Coursera course "Algorithms part 1"
-// This implementation uses a doubly linked list. An array can also probably be used.
+// This implementation uses a doubly linked list. An array can also probably be used, but would be a lot slower.
 // Written by Eric Goto, Mid April 2020
 public class Deque<Item> implements Iterable<Item> {
     private Node head;
