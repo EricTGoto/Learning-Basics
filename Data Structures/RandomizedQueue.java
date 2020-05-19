@@ -1,5 +1,7 @@
 // a data structure similar to a queue or a stack but items are pulled out at random instead of in FIFO or FILO order
 // problem from Princeton Coursera "Algorithms part 1"
+// Since we want to randomly take out objects, we need to be able to access things quickly, therefore an array should be used
+// If a linked list is used, the worst case scenario would be linear time, but an array can support queue operations at constant amortized time
 
 import edu.princeton.cs.algs4.StdRandom;
 
@@ -7,22 +9,15 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class RandomizedQueue<Item> implements Iterable<Item> {
-    private int size;
-    private Node head;
-    private Node tail;
 
-    private class Node {
-        Node next;
-        Item item;
+    private Item[] array;
+    private int currentSize;
 
-        public Node(Item item) {
-            this.next = null;
-            this.item = item;
-        }
-    }
 
+    // Initializes an empty RandomizedQueue object
     public RandomizedQueue() {
-        size = 0;
+        currentSize = 0;
+        array = (Item[]) new Object[1];
     }
 
     // is the randomized queue empty?
@@ -32,75 +27,85 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     // return the number of items in the queue
     public int size() {
-        return size;
+        return array.length;
     }
 
     // add item into queue
     public void enqueue(Item item) {
         if (item == null) throw new IllegalArgumentException("Please enter a valid argument");
-        Node newItem = new Node(item);
-        if (this.size() == 0) {
-            head = newItem;
-            tail = newItem;
-            size++;
-        } else {
-            tail.next = newItem;
-            tail = newItem;
-            size++;
-        }
+        if (currentSize == array.length) enlargeArray(2 * array.length);
+        array[currentSize] = item;
+        currentSize++;
     }
 
+
     // remove and return a random item
+    // we want this to be constant amortized time
     public Item dequeue() {
-        if (this.size() == 0) {
+        if (size == 0) {
             throw new NoSuchElementException();
-        } else if (this.size() == 1) {
+        } else if (size == 1) {
             Item temp = head.item;
             head = null;
             size--;
             return temp;
         } else {
-            int size = this.size();
-            int num = StdRandom.uniform(size) + 1;
+            int size = this.size;
+            int randomIndex = StdRandom.uniform(size) + 1;
             int index = 1;
-            Node clone = head;
 
-            if (size == 2) {
-                if (num == 2) {
-                    Item temp = clone.next.item;
-                    head.next = null;
-                    tail = head;
-                    this.size--;
-                    return temp;
-                } else {
-                    Item temp = clone.item;
-                    head = tail;
-                    return temp;
-                }
-            }
+            // In general there will be three cases we will deal with:
+            // Removing the first object, removing something in between the first and last object, and removing the last object
 
-            // if we are trying to remove the last item go to the 2nd last item and then make it point to null
-            if (num == size) {
-
-                while (clone.next.next != null) {
-                    clone = clone.next;
-                }
-                Item temp = clone.next.item;
-                clone.next = null;
+            // Case: Remove first object
+            if (randomIndex == 1) {
+                Item temp = head.item;
+                head = head.next;
                 this.size--;
                 return temp;
+            } else if (randomIndex == size) {
+                // Case: Remove last object
+                // Create a temporary copy of the head node and then go to the 2nd last node, extract item, change pointers
+                Node clone = head;
+                // Sifts through list until we hit the 2nd last node
+                while (head.next.next != null) {
+                    head = head.next;
+                }
+
+                Item temp = head.next.item;
+                // Remove the last node
+                head.next = null;
+                this.size--;
+                // Bring head back to the beginning
+                head = clone;
+                return temp;
             } else {
+                // Case: Remove an object between the first and last object
                 // stop at the node before the node we want to remove and make that node point two nodes forward
-                while (index + 1 < num) {
-                    clone = clone.next;
+                Node clone = head;
+                while (index + 1 < randomIndex) {
+                    head = head.next;
                     index++;
                 }
+                Item temp = head.next.item;
+                head.next = head.next.next;
+                head = clone;
+                this.size--;
+                return temp;
             }
-            Item temp = clone.next.item;
-            clone.next = clone.next.next;
-            this.size--;
-            return temp;
         }
+
+    }
+
+    // If the array is full, double the size
+    private void enlargeArray(int newSize) {
+        Item[] temp = array;
+        array = (Item[]) new Object[array.length * 2];
+
+        for (int k = 0; k < array.length; k++) {
+            array[k] = temp[k];
+        }
+
     }
 
     // return a random item without removing it
@@ -111,7 +116,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             return head.item;
         } else {
             int size = this.size();
-            int num = StdRandom.uniform(size + 1);
+            int num = StdRandom.uniform(size) + 1;
             int index = 1;
             Node clone = head;
             while (index < num) {
@@ -128,6 +133,9 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     }
 
     private class listIterator implements Iterator<Item> {
+        // create a copy of the current list instead of giving access to the real list
+        private Node clone = head;
+
         @Override
         public boolean hasNext() {
             return !isEmpty();
@@ -136,28 +144,19 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         @Override
         public Item next() {
             if (size == 0) throw new NoSuchElementException("List is empty");
-            return dequeue();
+
         }
 
         @Override
         public void remove() {
             throw new UnsupportedOperationException();
         }
+
     }
+
 
     public static void main(String[] args) {
         RandomizedQueue<String> rq = new RandomizedQueue<>();
-        rq.enqueue("ding");
-        rq.enqueue("dong");
-        rq.enqueue("1111");
-        rq.enqueue("2222");
-        System.out.println(rq.sample());
-        //System.out.println(rq.sample());
-        //System.out.println(rq.sample());
-        System.out.println(rq.dequeue());
-        for (String string : rq) {
-            System.out.println(string);
-        }
-        System.out.println(rq.dequeue()); // should give NoSuchElementException
+
     }
 }
