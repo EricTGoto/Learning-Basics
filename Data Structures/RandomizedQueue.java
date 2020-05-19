@@ -12,7 +12,6 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     private Item[] array;
     private int currentSize;
-    private int iteratorSize;
 
     // Initializes an empty RandomizedQueue object
     public RandomizedQueue() {
@@ -37,7 +36,6 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         if (currentSize == array.length) enlargeArray(2 * array.length);
         array[currentSize] = item;
         currentSize++;
-        iteratorSize = currentSize;
     }
 
     // remove and return a random item
@@ -52,12 +50,11 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         if (random != array.length - 1) array[random] = array[currentSize - 1];
         else array[random] = null;
         currentSize--;
-        iteratorSize = currentSize;
         return item;
     }
 
     // Dequeue method for the iterator as it needs to access the copied array
-    private Item dequeue(Item[] array) {
+    private Item dequeue(Item[] array, int iteratorSize) {
         if (iteratorSize == 0) throw new NoSuchElementException("The queue is empty");
 
         if (iteratorSize == array.length / 4) shrinkArray(array, array.length / 2);
@@ -113,11 +110,10 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     private class listIterator implements Iterator<Item> {
         // create a copy of the current list instead of giving access to the real list
         private Item[] arrayCopy = (Item[]) new Object[array.length];
+        private int iteratorSize = currentSize;
 
-        private listIterator() {
-            for (int k = 0; k < array.length; k++) {
-                arrayCopy[k] = array[k];
-            }
+        public listIterator() {
+            System.arraycopy(array, 0, arrayCopy, 0, arrayCopy.length);
         }
 
         @Override
@@ -128,8 +124,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         @Override
         public Item next() {
             if (iteratorSize == 0) throw new NoSuchElementException("List is empty");
-
-            return dequeue(arrayCopy);
+            return dequeue(arrayCopy, iteratorSize--);
 
         }
 
@@ -152,6 +147,8 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         //System.out.println(rq.dequeue());
         rq.enqueue("6");
         Iterator<String> i = rq.iterator();
+        Iterator<String> j = rq.iterator();
         while (i.hasNext()) System.out.println(i.next());
+        System.out.print(j.hasNext());
     }
 }
