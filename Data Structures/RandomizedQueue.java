@@ -22,12 +22,12 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     // is the randomized queue empty?
     public boolean isEmpty() {
-        return size == 0;
+        return currentSize == 0;
     }
 
     // return the number of items in the queue
     public int size() {
-        return array.length;
+        return currentSize;
     }
 
     // add item into queue
@@ -42,89 +42,53 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     // remove and return a random item
     // we want this to be constant amortized time
     public Item dequeue() {
-        if (size == 0) {
-            throw new NoSuchElementException();
-        } else if (size == 1) {
-            Item temp = head.item;
-            head = null;
-            size--;
-            return temp;
-        } else {
-            int size = this.size;
-            int randomIndex = StdRandom.uniform(size) + 1;
-            int index = 1;
+        if (currentSize == 0) throw new NoSuchElementException("The queue is empty");
+        if (currentSize == array.length / 4) shrinkArray(array.length / 2);
 
-            // In general there will be three cases we will deal with:
-            // Removing the first object, removing something in between the first and last object, and removing the last object
-
-            // Case: Remove first object
-            if (randomIndex == 1) {
-                Item temp = head.item;
-                head = head.next;
-                this.size--;
-                return temp;
-            } else if (randomIndex == size) {
-                // Case: Remove last object
-                // Create a temporary copy of the head node and then go to the 2nd last node, extract item, change pointers
-                Node clone = head;
-                // Sifts through list until we hit the 2nd last node
-                while (head.next.next != null) {
-                    head = head.next;
-                }
-
-                Item temp = head.next.item;
-                // Remove the last node
-                head.next = null;
-                this.size--;
-                // Bring head back to the beginning
-                head = clone;
-                return temp;
-            } else {
-                // Case: Remove an object between the first and last object
-                // stop at the node before the node we want to remove and make that node point two nodes forward
-                Node clone = head;
-                while (index + 1 < randomIndex) {
-                    head = head.next;
-                    index++;
-                }
-                Item temp = head.next.item;
-                head.next = head.next.next;
-                head = clone;
-                this.size--;
-                return temp;
-            }
-        }
-
+        int random = StdRandom.uniform(currentSize);
+        Item item = array[random];
+        arrayWithoutRemovedItem(random);
+        currentSize--;
+        return item;
     }
 
     // If the array is full, double the size
     private void enlargeArray(int newSize) {
+        Item[] temp = (Item[]) new Object[newSize];
+
+        for (int k = 0; k < array.length; k++) {
+            temp[k] = array[k];
+        }
+        array = temp;
+
+    }
+
+    // If the array has lots of empty space (3/4) then halve the size
+    private void shrinkArray(int newSize) {
         Item[] temp = array;
-        array = (Item[]) new Object[array.length * 2];
+        array = (Item[]) new Object[array.length / 2];
 
         for (int k = 0; k < array.length; k++) {
             array[k] = temp[k];
         }
+    }
 
+    // Make another array without the removed element
+    private void arrayWithoutRemovedItem(int removedIndex) {
+        Item[] temp = (Item[]) new Object[array.length - 1];
+        int tempIndex = 0;
+        for (int k = 0; k < array.length; k++) {
+            if (k == removedIndex) continue;
+            temp[tempIndex] = array[k];
+            tempIndex++;
+        }
+        array = temp;
     }
 
     // return a random item without removing it
     public Item sample() {
-        if (this.size() == 0) {
-            throw new NoSuchElementException();
-        } else if (this.size() == 1) {
-            return head.item;
-        } else {
-            int size = this.size();
-            int num = StdRandom.uniform(size) + 1;
-            int index = 1;
-            Node clone = head;
-            while (index < num) {
-                clone = clone.next;
-                index++;
-            }
-            return clone.item;
-        }
+        if (currentSize == 0) throw new NoSuchElementException();
+        return null;
     }
 
     // return an iterator
@@ -134,7 +98,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     private class listIterator implements Iterator<Item> {
         // create a copy of the current list instead of giving access to the real list
-        private Node clone = head;
+        private Item[] clone = array;
 
         @Override
         public boolean hasNext() {
@@ -143,8 +107,8 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
         @Override
         public Item next() {
-            if (size == 0) throw new NoSuchElementException("List is empty");
-
+            if (currentSize == 0) throw new NoSuchElementException("List is empty");
+            return null;
         }
 
         @Override
@@ -157,6 +121,13 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     public static void main(String[] args) {
         RandomizedQueue<String> rq = new RandomizedQueue<>();
-
+        rq.enqueue("XD");
+        System.out.println(rq.currentSize);
+        rq.enqueue("XKXK");
+        rq.enqueue("AAA");
+        System.out.println(rq.size());
+        System.out.println(rq.dequeue());
+        System.out.println(rq.dequeue());
+        System.out.println(rq.dequeue());
     }
 }
