@@ -13,7 +13,6 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     private Item[] array;
     private int currentSize;
 
-
     // Initializes an empty RandomizedQueue object
     public RandomizedQueue() {
         currentSize = 0;
@@ -33,24 +32,25 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     // add item into queue
     public void enqueue(Item item) {
         if (item == null) throw new IllegalArgumentException("Please enter a valid argument");
+
         if (currentSize == array.length) enlargeArray(2 * array.length);
         array[currentSize] = item;
         currentSize++;
     }
 
-
     // remove and return a random item
     // we want this to be constant amortized time
     public Item dequeue() {
         if (currentSize == 0) throw new NoSuchElementException("The queue is empty");
-        if (currentSize == array.length / 4) shrinkArray(array.length / 2);
 
+        if (currentSize == array.length / 4) shrinkArray(array.length / 2);
         int random = StdRandom.uniform(currentSize);
         Item item = array[random];
         arrayWithoutRemovedItem(random);
         currentSize--;
         return item;
     }
+
 
     // If the array is full, double the size
     private void enlargeArray(int newSize) {
@@ -66,7 +66,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     // If the array has lots of empty space (3/4) then halve the size
     private void shrinkArray(int newSize) {
         Item[] temp = array;
-        array = (Item[]) new Object[array.length / 2];
+        array = (Item[]) new Object[newSize];
 
         for (int k = 0; k < array.length; k++) {
             array[k] = temp[k];
@@ -75,20 +75,27 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     // Make another array without the removed element
     private void arrayWithoutRemovedItem(int removedIndex) {
-        Item[] temp = (Item[]) new Object[array.length - 1];
-        int tempIndex = 0;
-        for (int k = 0; k < array.length; k++) {
-            if (k == removedIndex) continue;
-            temp[tempIndex] = array[k];
-            tempIndex++;
+        // if array length is 1, we shouldn't make it 0
+        if (array.length == 1) {
+            array[0] = null;
+        } else {
+            Item[] temp = (Item[]) new Object[array.length - 1];
+            int tempIndex = 0;
+            for (int k = 0; k < array.length; k++) {
+                if (k != removedIndex) {
+                    temp[tempIndex] = array[k];
+                    tempIndex++;
+                }
+            }
+            array = temp;
         }
-        array = temp;
     }
 
     // return a random item without removing it
     public Item sample() {
         if (currentSize == 0) throw new NoSuchElementException();
-        return null;
+        int random = StdRandom.uniform(currentSize);
+        return array[random];
     }
 
     // return an iterator
@@ -98,17 +105,17 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     private class listIterator implements Iterator<Item> {
         // create a copy of the current list instead of giving access to the real list
-        private Item[] clone = array;
+
 
         @Override
         public boolean hasNext() {
-            return !isEmpty();
+            return currentSize != 0;
         }
 
         @Override
         public Item next() {
             if (currentSize == 0) throw new NoSuchElementException("List is empty");
-            return null;
+            return dequeue();
         }
 
         @Override
@@ -118,16 +125,10 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     }
 
-
     public static void main(String[] args) {
         RandomizedQueue<String> rq = new RandomizedQueue<>();
         rq.enqueue("XD");
-        System.out.println(rq.currentSize);
-        rq.enqueue("XKXK");
-        rq.enqueue("AAA");
-        System.out.println(rq.size());
-        System.out.println(rq.dequeue());
-        System.out.println(rq.dequeue());
-        System.out.println(rq.dequeue());
+        rq.dequeue();
+        rq.enqueue("x");
     }
 }
