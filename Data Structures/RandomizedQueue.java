@@ -12,6 +12,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     private Item[] array;
     private int currentSize;
+    private int iteratorSize;
 
     // Initializes an empty RandomizedQueue object
     public RandomizedQueue() {
@@ -36,6 +37,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         if (currentSize == array.length) enlargeArray(2 * array.length);
         array[currentSize] = item;
         currentSize++;
+        iteratorSize = currentSize;
     }
 
     // remove and return a random item
@@ -46,11 +48,26 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         if (currentSize == array.length / 4) shrinkArray(array.length / 2);
         int random = StdRandom.uniform(currentSize);
         Item item = array[random];
-        arrayWithoutRemovedItem(random);
+        // Since we don't want random null spots in our array, we can fill what we take out with the tail
+        if (random != array.length - 1) array[random] = array[currentSize - 1];
+        else array[random] = null;
         currentSize--;
+        iteratorSize = currentSize;
         return item;
     }
 
+    // Dequeue method for the iterator as it needs to access the copied array
+    private Item dequeue(Item[] array) {
+        if (iteratorSize == 0) throw new NoSuchElementException("The queue is empty");
+
+        if (iteratorSize == array.length / 4) shrinkArray(array, array.length / 2);
+        int random = StdRandom.uniform(iteratorSize);
+        Item item = array[random];
+        if (random != array.length - 1) array[random] = array[iteratorSize - 1];
+        else array[random] = null;
+        iteratorSize--;
+        return item;
+    }
 
     // If the array is full, double the size
     private void enlargeArray(int newSize) {
@@ -60,7 +77,6 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             temp[k] = array[k];
         }
         array = temp;
-
     }
 
     // If the array has lots of empty space (3/4) then halve the size
@@ -73,21 +89,12 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         }
     }
 
-    // Make another array without the removed element
-    private void arrayWithoutRemovedItem(int removedIndex) {
-        // if array length is 1, we shouldn't make it 0
-        if (array.length == 1) {
-            array[0] = null;
-        } else {
-            Item[] temp = (Item[]) new Object[array.length - 1];
-            int tempIndex = 0;
-            for (int k = 0; k < array.length; k++) {
-                if (k != removedIndex) {
-                    temp[tempIndex] = array[k];
-                    tempIndex++;
-                }
-            }
-            array = temp;
+    private void shrinkArray(Item[] array, int newSize) {
+        Item[] temp = array;
+        array = (Item[]) new Object[newSize];
+
+        for (int k = 0; k < array.length; k++) {
+            array[k] = temp[k];
         }
     }
 
@@ -105,17 +112,25 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     private class listIterator implements Iterator<Item> {
         // create a copy of the current list instead of giving access to the real list
+        private Item[] arrayCopy = (Item[]) new Object[array.length];
 
+        private listIterator() {
+            for (int k = 0; k < array.length; k++) {
+                arrayCopy[k] = array[k];
+            }
+        }
 
         @Override
         public boolean hasNext() {
-            return currentSize != 0;
+            return iteratorSize != 0;
         }
 
         @Override
         public Item next() {
-            if (currentSize == 0) throw new NoSuchElementException("List is empty");
-            return dequeue();
+            if (iteratorSize == 0) throw new NoSuchElementException("List is empty");
+
+            return dequeue(arrayCopy);
+
         }
 
         @Override
@@ -127,8 +142,16 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     public static void main(String[] args) {
         RandomizedQueue<String> rq = new RandomizedQueue<>();
-        rq.enqueue("XD");
-        rq.dequeue();
-        rq.enqueue("x");
+        rq.enqueue("1");
+        //System.out.println(rq.dequeue());
+        rq.enqueue("2");
+        rq.enqueue("3");
+        //System.out.println(rq.dequeue());
+        rq.enqueue("4");
+        rq.enqueue("5");
+        //System.out.println(rq.dequeue());
+        rq.enqueue("6");
+        Iterator<String> i = rq.iterator();
+        while (i.hasNext()) System.out.println(i.next());
     }
 }
