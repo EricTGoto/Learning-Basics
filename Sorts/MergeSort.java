@@ -1,13 +1,13 @@
 // implementation of merge sort
 public class MergeSort {
+    private static Comparable[] aux;
 
-    public static void merge(Comparable[] array, Comparable[] aux, int low, int high) {
+    private static void merge(Comparable[] array, Comparable[] aux, int low, int mid, int high) {
 
         for (int k = 0; k < array.length; k++) {
             aux[k] = array[k];
         }
 
-        int mid = low + (high - low) / 2;
         int i = low;
         int j = mid + 1;
         for (int k = low; k < array.length; k++) {
@@ -22,13 +22,13 @@ public class MergeSort {
         if (high <= low) return;
         int mid = low + (high - low) / 2;
         sort(array, aux, low, mid);
-        sort(array, aux, mid, high);
-        merge(array, aux, low, high);
+        sort(array, aux, mid + 1, high);
+        merge(array, aux, low, mid, high);
     }
 
     public static void sort(Comparable[] array) {
         int high = array.length - 1;
-        Comparable[] aux = new Comparable[array.length];
+        aux = new Comparable[array.length];
 
         sort(array, aux, 0, high);
     }
@@ -40,7 +40,7 @@ public class MergeSort {
     public static void main(String[] args) {
         Integer[] a = {1, 43, 56, 2, 4, 67, 2, 7, 567, 9, 335, 42, 2, 574, 3, 2, 7, 89, 2, 134, 34, 457, 2, 46, 7, 0};
         sort(a);
-        System.out.print(a);
+        for (int k = 0; k < a.length; k++) System.out.print(a[k] + " ");
 
     }
 }
