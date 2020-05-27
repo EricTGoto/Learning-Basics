@@ -28,7 +28,7 @@ public class FastCollinearPoints {
         }
 
         // for each element in the array, sort the array with respect to the element and the slope they make with other elements
-        // then go through the sorted array and check if there are blocks of 4 ore more elements with the same slope
+        // then go through the sorted array and check if there are blocks of 4 or more elements with the same slope
 
         Arrays.sort(copyArray, points[0].slopeOrder());
         for (int i = 0; i < length; i++) {
@@ -49,8 +49,8 @@ public class FastCollinearPoints {
 
                     if (k == length - 2 && slope == nextSlope) startIndex = k - sameSlope + 1;
                     else startIndex = k - sameSlope;
-
-
+                    // Due to the way sameSlope is incremented, there is an offset of 2 between the
+                    // total number of collinear points in a segment and the sameSlope variable
                     int numCollinearPoints = sameSlope + 2;
 
                     Point[] collinearPoints = new Point[numCollinearPoints];
@@ -63,6 +63,8 @@ public class FastCollinearPoints {
                     // sort by natural order
                     Arrays.sort(collinearPoints);
 
+                    // check if the first element of the array is equal to a minimum, if it is then
+                    // the segment in consideration is unique and maximal
                     if (origin == collinearPoints[0]) {
                         collinearSegments[numberOfSegments] = new LineSegment(collinearPoints[0], collinearPoints[numCollinearPoints - 1]);
                         numberOfSegments++;
@@ -75,7 +77,7 @@ public class FastCollinearPoints {
                     sameSlope = 0;
                 }
             }
-            // if we couldn't find anything then we keep the point and re-sort points with a different point
+            // if we couldn't find anything then we re-sort copyArray with the next point
             if (i + 1 != length) {
                 Arrays.sort(copyArray, pointsIndex, length, points[i + 1].slopeOrder());
             }
