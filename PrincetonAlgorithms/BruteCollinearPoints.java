@@ -1,5 +1,4 @@
 import edu.princeton.cs.algs4.In;
-import edu.princeton.cs.algs4.StdDraw;
 
 import java.util.Arrays;
 
@@ -14,6 +13,7 @@ public class BruteCollinearPoints {
 
         numberOfSegments = 0;
         collinearSegments = new LineSegment[1];
+
         int length = points.length;
 
         for (int i = 0; i < length - 3; i++) {
@@ -23,12 +23,13 @@ public class BruteCollinearPoints {
                         double slope1 = points[l].slopeTo(points[k]);
                         double slope2 = points[l].slopeTo(points[j]);
                         double slope3 = points[l].slopeTo(points[i]);
-                        // System.out.println(slope1 + " " + slope2 + " " + slope3);
+
                         if (numberOfSegments == collinearSegments.length) expandArray();
 
                         if (slope1 == slope2 && slope1 == slope3) {
                             Point smallestPoint = smallestPoint(points[i], points[j], points[k], points[l]);
                             Point largestPoint = largestPoint(points[i], points[j], points[k], points[l]);
+
                             collinearSegments[numberOfSegments] = new LineSegment(smallestPoint, largestPoint);
                             numberOfSegments++;
                         }
@@ -109,7 +110,7 @@ public class BruteCollinearPoints {
             points[x] = new Point(i.readInt(), i.readInt());
             x++;
         }
-
+/*
         StdDraw.enableDoubleBuffering();
         StdDraw.setXscale(0, 32768);
         StdDraw.setYscale(0, 32768);
@@ -118,7 +119,7 @@ public class BruteCollinearPoints {
         }
         StdDraw.show();
 
-
+*/
         BruteCollinearPoints b = new BruteCollinearPoints(points);
 
         for (int k = 0; k < b.numberOfSegments; k++) {
