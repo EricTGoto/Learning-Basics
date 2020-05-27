@@ -101,7 +101,11 @@ public class FastCollinearPoints {
     }
 
     public LineSegment[] segments() {
-        return collinearSegments;
+        LineSegment[] temp = new LineSegment[numberOfSegments];
+        for (int k = 0; k < numberOfSegments; k++) {
+            temp[k] = collinearSegments[k];
+        }
+        return temp;
     }
 
     private int saveSegment(Point[] points, int i, int k, int sameSlope) {
