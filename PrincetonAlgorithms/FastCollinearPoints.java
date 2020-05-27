@@ -146,7 +146,7 @@ public class FastCollinearPoints {
         int length = points.length;
 
         for (int k = 0; k < length; k++) {
-            for (int i = k + 1; i < length - 1; i++) {
+            for (int i = k + 1; i < length; i++) {
                 if (points[k].compareTo(points[i]) == 0) return true;
             }
         }
