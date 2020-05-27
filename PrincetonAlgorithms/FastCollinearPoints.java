@@ -71,7 +71,7 @@ public class FastCollinearPoints {
                     // sort by natural order
                     Arrays.sort(collinearPoints);
                     //  System.out.println(origin == collinearPoints[0] || origin == collinearPoints[numCollinearPoints - 1]);
-                    if (origin == collinearPoints[0] || origin == collinearPoints[numCollinearPoints - 1]) {
+                    if (origin == collinearPoints[0]) {
                         collinearSegments[numberOfSegments] = new LineSegment(collinearPoints[0], collinearPoints[numCollinearPoints - 1]);
                         numberOfSegments++;
                     }
@@ -83,12 +83,12 @@ public class FastCollinearPoints {
                 }
             }
             // if we find segments with a point then we remove that point from the points array
-            if (i + 1 != length && previousNumberOfSegments != numberOfSegments) {
-                Arrays.sort(points, ++pointsIndex, length, originalArray[i + 1].slopeOrder());
-                previousNumberOfSegments = numberOfSegments;
-            }
+            // if (i + 1 != length && previousNumberOfSegments != numberOfSegments) {
+            //Arrays.sort(points, ++pointsIndex, length, originalArray[i + 1].slopeOrder());
+            //previousNumberOfSegments = numberOfSegments;
+            // }
             // if we couldn't find anything then we keep the point and re-sort points with a different point
-            else if (i + 1 != length) {
+            if (i + 1 != length) {
                 Arrays.sort(points, pointsIndex, length, originalArray[i + 1].slopeOrder());
             }
             sameSlope = 0;
