@@ -107,10 +107,15 @@ public class FastCollinearPoints {
 
     private boolean containsDuplicatePoints(Point[] points) {
         int length = points.length;
+        Point[] temp = new Point[length];
         for (int k = 0; k < length; k++) {
-            for (int i = k + 1; i < length; i++) {
-                if (points[k].compareTo(points[i]) == 0) return true;
-            }
+            temp[k] = points[k];
+        }
+
+        Arrays.sort(temp);
+
+        for (int j = 0; j < length - 1; j++) {
+            if (temp[j].compareTo(temp[j + 1]) == 0) return true;
         }
         return false;
     }
