@@ -9,8 +9,9 @@ public class FastCollinearPoints {
 
     public FastCollinearPoints(Point[] points) {
 
-        if (points == null || containsNull(points) || containsDuplicatePoints(points))
-            throw new IllegalArgumentException("Enter a valid argument");
+        if (points == null) throw new IllegalArgumentException("Argument is null");
+        if (containsNull(points)) throw new IllegalArgumentException("Argument can't contain null points");
+        if (containsDuplicatePoints(points)) throw new IllegalArgumentException("Argument contains duplicate points");
 
         numberOfSegments = 0;
         collinearSegments = new LineSegment[1];
@@ -67,14 +68,13 @@ public class FastCollinearPoints {
                         numberOfSegments++;
                     }
 
-                    sameSlope = 0;
                     slope = nextSlope;
+                    sameSlope = 0;
                 } else if (slope != nextSlope) {
                     slope = nextSlope;
                     sameSlope = 0;
                 }
             }
-
             // if we couldn't find anything then we keep the point and re-sort points with a different point
             if (i + 1 != length) {
                 Arrays.sort(copyArray, pointsIndex, length, points[i + 1].slopeOrder());
@@ -107,7 +107,6 @@ public class FastCollinearPoints {
 
     private boolean containsDuplicatePoints(Point[] points) {
         int length = points.length;
-
         for (int k = 0; k < length; k++) {
             for (int i = k + 1; i < length; i++) {
                 if (points[k].compareTo(points[i]) == 0) return true;
@@ -157,14 +156,6 @@ public class FastCollinearPoints {
             System.out.println(fcp.segments()[k]);
         }
         System.out.println(fcp.numberOfSegments);
-/*
 
-   Arrays.sort(points, points[0].slopeOrder());
-        for (int k = 0; k < points.length; k++) {
-            System.out.println(points[k]);
-        }
-
-
-*/
     }
 }
