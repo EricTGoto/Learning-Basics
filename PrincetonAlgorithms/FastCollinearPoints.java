@@ -13,46 +13,83 @@ public class FastCollinearPoints {
             throw new IllegalArgumentException("Enter a valid argument");
 
         numberOfSegments = 0;
+        int previousNumberOfSegments = 0;
         collinearSegments = new LineSegment[1];
 
         int length = points.length;
         int sameSlope = 0;
         int startIndex = 0;
-        int endIndex = length - 1;
-
-        Point[] temp = new Point[length];
+        int pointsIndex = 0;
+        Point[] originalArray = new Point[length];
 
         // create a copy of points to refer to
         for (int j = 0; j < length; j++) {
-            temp[j] = points[j];
+            originalArray[j] = points[j];
         }
 
         // for each element in the array, sort the array with respect to the element and the slope they make with other elements
         // then go through the sorted array and check if there are blocks of 4 ore more elements with the same slope
-        for (int i = startIndex; i < length; i++) {
-            Point origin = points[i];
-            Arrays.sort(points, i, length, origin.slopeOrder());
-            if (numberOfSegments == collinearSegments.length) expandArray();
-            for (int k = i; k < endIndex - 1; k++) {
-                //System.out.println("k= " + k);
-                if (origin.slopeTo(points[k + 1]) == origin.slopeTo(points[k + 2])) {
+
+        Arrays.sort(points, originalArray[0].slopeOrder());
+        for (int i = 0; i < length; i++) {
+            Point origin = originalArray[i];
+            //  System.out.println(origin);
+            //if (i == 24) break;
+            double slope = origin.slopeTo(points[pointsIndex]);
+            for (int k = pointsIndex; k < length - 1; k++) {
+                if (numberOfSegments == collinearSegments.length) expandArray();
+
+                double nextSlope = origin.slopeTo(points[k + 1]);
+                // System.out.println("ss= " + sameSlope + " Comparing: " + k + "and " + (k + 1) + "point k= " + points[k] + "point k+1= " + points[k + 1]);
+                // System.out.println("k= " + k);
+                //if (i == 0)
+                //System.out.println("slope=" + slope + "next slope= " + nextSlope);
+                if (slope == nextSlope) {
                     sameSlope++;
-                    //System.out.println(sameSlope + " " + origin.slopeTo(points[k + 1]) + " " + origin.slopeTo(points[k + 2]));
-                    if (k + 2 > endIndex - 1) {
-                        saveSegment(points, i, k, sameSlope);
-                        i = length;
-                        break;
-                    }
-                } else {
-                    if (sameSlope >= 2) {
-                        int numCollinearPoints = saveSegment(points, i, k, sameSlope);
-                        i = i + numCollinearPoints - 1;
-                        //System.out.println("i=" + i);
-                        break;
-                    }
-                    sameSlope = 0;
+                    //   if (i == 23)
+
                 }
 
+                if (sameSlope > 1 && slope != nextSlope ||
+                        (k == length - 2 && sameSlope > 1)) {
+
+                    if (k == length - 2 && slope == nextSlope) startIndex = k - sameSlope + 1;
+                    else startIndex = k - sameSlope;
+
+                    //System.out.println("startIndex" + startIndex);
+                    int numCollinearPoints = sameSlope + 2;
+                    //System.out.println("Sameslope= " + sameSlope);
+                    Point[] collinearPoints = new Point[numCollinearPoints];
+
+                    for (int z = 0; z < numCollinearPoints - 1; z++) {
+                        collinearPoints[z] = points[z + startIndex];
+                        //System.out.println(points[z + startIndex]);
+                    }
+                    collinearPoints[numCollinearPoints - 1] = origin;
+
+
+                    // sort by natural order
+                    Arrays.sort(collinearPoints);
+                    //  System.out.println(origin == collinearPoints[0] || origin == collinearPoints[numCollinearPoints - 1]);
+                    if (origin == collinearPoints[0] || origin == collinearPoints[numCollinearPoints - 1]) {
+                        collinearSegments[numberOfSegments] = new LineSegment(collinearPoints[0], collinearPoints[numCollinearPoints - 1]);
+                        numberOfSegments++;
+                    }
+                    sameSlope = 0;
+                    slope = nextSlope;
+                } else if (slope != nextSlope) {
+                    slope = nextSlope;
+                    sameSlope = 0;
+                }
+            }
+            // if we find segments with a point then we remove that point from the points array
+            if (i + 1 != length && previousNumberOfSegments != numberOfSegments) {
+                Arrays.sort(points, ++pointsIndex, length, originalArray[i + 1].slopeOrder());
+                previousNumberOfSegments = numberOfSegments;
+            }
+            // if we couldn't find anything then we keep the point and re-sort points with a different point
+            else if (i + 1 != length) {
+                Arrays.sort(points, pointsIndex, length, originalArray[i + 1].slopeOrder());
             }
             sameSlope = 0;
         }
@@ -147,17 +184,20 @@ public class FastCollinearPoints {
         //}
         //StdDraw.show();
 
-
         FastCollinearPoints fcp = new FastCollinearPoints(points);
         int length = fcp.numberOfSegments;
         for (int k = 0; k < fcp.numberOfSegments; k++) {
             System.out.println(fcp.segments()[k]);
         }
+        System.out.println(fcp.numberOfSegments);
 /*
-        Arrays.sort(points, points[0].slopeOrder());
+
+   Arrays.sort(points, points[0].slopeOrder());
         for (int k = 0; k < points.length; k++) {
             System.out.println(points[k]);
         }
+
+
 */
     }
 }
