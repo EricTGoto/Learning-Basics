@@ -20,26 +20,26 @@ public class FastCollinearPoints {
         int sameSlope = 0;
         int startIndex = 0;
         int pointsIndex = 0;
-        Point[] originalArray = new Point[length];
+        Point[] copyArray = new Point[length];
 
         // create a copy of points to refer to
         for (int j = 0; j < length; j++) {
-            originalArray[j] = points[j];
+            copyArray[j] = points[j];
         }
 
         // for each element in the array, sort the array with respect to the element and the slope they make with other elements
         // then go through the sorted array and check if there are blocks of 4 ore more elements with the same slope
 
-        Arrays.sort(points, originalArray[0].slopeOrder());
+        Arrays.sort(copyArray, points[0].slopeOrder());
         for (int i = 0; i < length; i++) {
-            Point origin = originalArray[i];
+            Point origin = points[i];
             //  System.out.println(origin);
             //if (i == 24) break;
-            double slope = origin.slopeTo(points[pointsIndex]);
+            double slope = origin.slopeTo(copyArray[pointsIndex]);
             for (int k = pointsIndex; k < length - 1; k++) {
                 if (numberOfSegments == collinearSegments.length) expandArray();
 
-                double nextSlope = origin.slopeTo(points[k + 1]);
+                double nextSlope = origin.slopeTo(copyArray[k + 1]);
                 // System.out.println("ss= " + sameSlope + " Comparing: " + k + "and " + (k + 1) + "point k= " + points[k] + "point k+1= " + points[k + 1]);
                 // System.out.println("k= " + k);
                 //if (i == 0)
@@ -62,7 +62,7 @@ public class FastCollinearPoints {
                     Point[] collinearPoints = new Point[numCollinearPoints];
 
                     for (int z = 0; z < numCollinearPoints - 1; z++) {
-                        collinearPoints[z] = points[z + startIndex];
+                        collinearPoints[z] = copyArray[z + startIndex];
                         //System.out.println(points[z + startIndex]);
                     }
                     collinearPoints[numCollinearPoints - 1] = origin;
@@ -89,7 +89,7 @@ public class FastCollinearPoints {
             // }
             // if we couldn't find anything then we keep the point and re-sort points with a different point
             if (i + 1 != length) {
-                Arrays.sort(points, pointsIndex, length, originalArray[i + 1].slopeOrder());
+                Arrays.sort(copyArray, pointsIndex, length, points[i + 1].slopeOrder());
             }
             sameSlope = 0;
         }
