@@ -38,9 +38,31 @@ public class Board {
         return size;
     }
 
-    // returns the number of tiles out of place
+    // returns the number of tiles out of place, called the hamming distance
+    // Example: a 3x3 board is solved, that is no tiles out of place if it looks like the following:
+    // 1 2 3
+    // 4 5 6
+    // 7 8 0
+    // where 0 represents an empty square
+    // The following board:
+    // 4 5 1
+    // 2 3 6
+    // 7 8 0
+    // has a hamming distance of 5
     public int hamming() {
-        return 0;
+        int hamming = 0;
+
+        for (int k = 0; k < size; k++)
+            for (int j = 0; j < size; j++) {
+                // checks if the last square is 0
+                if (k == size - 1 && j == size - 1 && board[k][j] == 0) {
+                    hamming++;
+                    break;
+                }
+                if (k + j != board[k][j] - 1) hamming++;
+            }
+
+        return hamming;
     }
 
     // returns the sum of Manhattan distances between tiles and goal
@@ -75,7 +97,8 @@ public class Board {
                 {0, 9, 8}};
 
         Board b = new Board(test);
-        System.out.print(b.toString());
+        System.out.println(b.toString());
+        System.out.print(b.hamming());
     }
 
 }
