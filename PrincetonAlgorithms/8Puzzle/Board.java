@@ -11,6 +11,8 @@ public class Board {
     // initialize a board with n by n tiles
     public Board(int[][] tiles) {
         size = tiles.length;
+        board = new int[size][size];
+
         // create a copy of the input array for immutability
         for (int k = 0; k < size; k++)
             for (int j = 0; j < size; j++)
