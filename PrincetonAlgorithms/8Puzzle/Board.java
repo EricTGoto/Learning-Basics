@@ -5,10 +5,18 @@
 
 public class Board {
 
+    private int size;
+    private int[][] board;
+
     // initialize a board with n by n tiles
     public Board(int[][] tiles) {
-
+        size = tiles.length;
+        // create a copy of the input array for immutability
+        for (int k = 0; k < size; k++)
+            for (int j = 0; j < size; j++)
+                board[k][j] = tiles[k][j];
     }
+
 
     // returns a string representation of the board
     public String toString() {
