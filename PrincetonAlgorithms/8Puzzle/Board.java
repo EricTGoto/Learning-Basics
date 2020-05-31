@@ -94,7 +94,12 @@ public class Board {
 
     // checks if board is solved
     public boolean isGoal() {
-        return false;
+        for (int k = 0; k < size; k++)
+            for (int j = 0; j < size; j++) {
+                if (k == size - 1 && j == size - 1) return board[k][j] == 0;
+                if (board[k][j] - 1 != k * size + j) return false;
+            }
+        return true;
     }
 
     // checks if two boards are equal
@@ -121,7 +126,15 @@ public class Board {
         Board b = new Board(test);
         System.out.println(b.toString());
         System.out.println(b.hamming());
-        System.out.print(b.manhattan()); // should be 2+2+2+2+2+0+2+1+1=14
+        System.out.println(b.manhattan()); // should be 2+2+2+2+2+0+2+1+1=14
+        System.out.println(b.isGoal());
+
+        int[][] test1 = {{1, 2, 3},
+                {4, 5, 6},
+                {7, 8, 0}};
+
+        Board c = new Board(test1);
+        System.out.println(c.isGoal());
     }
 
 }
