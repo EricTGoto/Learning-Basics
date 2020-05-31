@@ -66,8 +66,30 @@ public class Board {
     }
 
     // returns the sum of Manhattan distances between tiles and goal
+    // A manhattan distance is the distance a tile is the sum of the vertical and horizontal distances
+    // it is from its goal position. For example:
+    // 4 5 1
+    // 2 3 6
+    // 7 8 0
+    // has a manhattan distance of: 1+1+2+2+2=8
     public int manhattan() {
-        return 0;
+        int manhattan = 0;
+        int colDistance;
+        int rowDistance;
+        for (int k = 0; k < size; k++)
+            for (int j = 0; j < size; j++) {
+                int tileValue = board[k][j];
+                if (tileValue == 0) {
+                    colDistance = size - 1 - k;
+                    rowDistance = size - 1 - j;
+                    manhattan += colDistance + rowDistance;
+                } else {
+                    colDistance = Math.abs(j - (tileValue - 1) % size);
+                    rowDistance = Math.abs(k - (tileValue - 1) / size);
+                    manhattan += colDistance + rowDistance;
+                }
+            }
+        return manhattan;
     }
 
     // checks if board is solved
@@ -94,11 +116,12 @@ public class Board {
     public static void main(String[] args) {
         int[][] test = {{3, 4, 5},
                 {2, 1, 6},
-                {0, 9, 8}};
+                {0, 7, 8}};
 
         Board b = new Board(test);
         System.out.println(b.toString());
-        System.out.print(b.hamming());
+        System.out.println(b.hamming());
+        System.out.print(b.manhattan()); // should be 2+2+2+2+2+0+2+1+1=14
     }
 
 }
