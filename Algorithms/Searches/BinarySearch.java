@@ -2,7 +2,7 @@
 // By Eric Goto
 public class BinarySearch {
 
-    private static boolean search(int[] array, int n) {
+    private boolean search(int[] array, int n) {
 
         int length = array.length;
         int hi = length - 1;
