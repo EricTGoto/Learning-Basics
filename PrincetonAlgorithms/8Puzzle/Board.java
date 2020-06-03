@@ -3,6 +3,8 @@
 // so that they end up in row major order
 // Written by Eric Goto, assignment from Princeton Coursera Algorithms course
 
+import edu.princeton.cs.algs4.Stack;
+
 public class Board {
 
     private int size;
@@ -55,9 +57,8 @@ public class Board {
         for (int k = 0; k < size; k++)
             for (int j = 0; j < size; j++) {
                 // checks if the last square is 0
-                if (k == size - 1 && j == size - 1 && board[k][j] == 0) {
-                    hamming++;
-                    break;
+                if (board[k][j] == 0) {
+                    continue;
                 }
                 if (k + j != board[k][j] - 1) hamming++;
             }
@@ -80,9 +81,10 @@ public class Board {
             for (int j = 0; j < size; j++) {
                 int tileValue = board[k][j];
                 if (tileValue == 0) {
-                    colDistance = size - 1 - k;
-                    rowDistance = size - 1 - j;
-                    manhattan += colDistance + rowDistance;
+                    continue;
+                    // colDistance = size - 1 - k;
+                    // rowDistance = size - 1 - j;
+                    // manhattan += colDistance + rowDistance;
                 } else {
                     colDistance = Math.abs(j - (tileValue - 1) % size);
                     rowDistance = Math.abs(k - (tileValue - 1) / size);
@@ -104,12 +106,56 @@ public class Board {
 
     // checks if two boards are equal
     public boolean equals(Object y) {
-        return false;
+        if (y == this) return true;
+
+        if (y == null) return false;
+
+        if (y.getClass() != this.getClass()) return false;
+
+        Board test = (Board) y;
+
+        for (int k = 0; k < size; k++)
+            for (int j = 0; j < size; j++) {
+                if (board[k][j] != test.board[j][k]) return false;
+            }
+        return true;
     }
 
     // returns the neighboring boards
     public Iterable<Board> neighbors() {
-        return null;
+
+        Stack<Board> s = new Stack<Board>();
+
+
+        // find the index of the 0
+        int row = -1, col = 0; // row, col is location of 0
+        for (int k = 0; k < size; k++) {
+            for (int j = 0; j < size; j++) {
+                if (board[k][j] == 0) {
+                    row = k;
+                    col = j;
+                    break;
+                }
+            }
+            if (row == k) break;
+        }
+
+        for (int z = row - 1; z <= row + 1; z++)
+            for (int x = col - 1; x <= col + 1; x++) {
+                if (z == row - 1 && x != col) continue;
+                if (z == row && x == col) continue;
+                if (z == row + 1 && x != col) continue;
+                if (z >= size || z < 0) continue;
+                if (x >= size || x < 0) continue;
+
+                Board temp = new Board(board);
+                board[row][col] = board[z][x];
+                board[z][x] = 0;
+                s.push(new Board(board));
+                board = temp.board;
+                temp = null;
+            }
+        return s;
     }
 
     // returns a board that is created by exchanging any pair of tiles
@@ -130,11 +176,16 @@ public class Board {
         System.out.println(b.isGoal());
 
         int[][] test1 = {{1, 2, 3},
-                {4, 5, 6},
-                {7, 8, 0}};
+                {4, 0, 6},
+                {7, 8, 5}};
 
         Board c = new Board(test1);
+        System.out.println(c.toString());
         System.out.println(c.isGoal());
+
+        Iterable<Board> a = c.neighbors();
+        for (Board z : a)
+            System.out.println(z.toString());
     }
 
 }
