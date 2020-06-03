@@ -56,11 +56,11 @@ public class Board {
 
         for (int k = 0; k < size; k++)
             for (int j = 0; j < size; j++) {
-                // checks if the last square is 0
+                // if the value is 0, skip it as it doesn't count towards the hamming distance
                 if (board[k][j] == 0) {
                     continue;
                 }
-                if (k + j != board[k][j] - 1) hamming++;
+                if (k * size + j != board[k][j] - 1) hamming++;
             }
 
         return hamming;
@@ -171,7 +171,7 @@ public class Board {
 
         Board b = new Board(test);
         System.out.println(b.toString());
-        System.out.println(b.hamming());
+        System.out.println(b.hamming()); // should print 7
         System.out.println(b.manhattan()); // should be 2+2+2+2+2+0+2+1+1=14
         System.out.println(b.isGoal());
 
@@ -180,12 +180,14 @@ public class Board {
                 {7, 8, 5}};
 
         Board c = new Board(test1);
-        System.out.println(c.toString());
-        System.out.println(c.isGoal());
 
-        Iterable<Board> a = c.neighbors();
-        for (Board z : a)
-            System.out.println(z.toString());
+        System.out.println(c.hamming()); // should return 1
+        //System.out.println(c.toString());
+        //System.out.println(c.isGoal());
+
+        //Iterable<Board> a = c.neighbors();
+        //for (Board z : a)
+        //System.out.println(z.toString());
     }
 
 }
