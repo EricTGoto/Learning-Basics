@@ -114,10 +114,15 @@ public class Board {
 
         Board test = (Board) y;
 
+        // if the boards aren't the same size, they aren't equal
+        if (test.board.length != size) return false;
+
+        // check every index
         for (int k = 0; k < size; k++)
             for (int j = 0; j < size; j++) {
                 if (board[k][j] != test.board[k][j]) return false;
             }
+
         return true;
     }
 
