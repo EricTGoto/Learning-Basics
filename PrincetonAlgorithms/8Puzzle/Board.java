@@ -29,7 +29,7 @@ public class Board {
 
         for (int k = 0; k < size; k++)
             for (int j = 0; j < size; j++) {
-                boardString.append(board[j][k] + " ");
+                boardString.append(board[k][j] + " ");
                 if (j == size - 1) boardString.append("\n ");
             }
         return boardString.toString();
