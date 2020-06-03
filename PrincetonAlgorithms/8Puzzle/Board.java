@@ -116,7 +116,7 @@ public class Board {
 
         for (int k = 0; k < size; k++)
             for (int j = 0; j < size; j++) {
-                if (board[k][j] != test.board[j][k]) return false;
+                if (board[k][j] != test.board[k][j]) return false;
             }
         return true;
     }
