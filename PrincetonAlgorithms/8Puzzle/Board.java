@@ -4,11 +4,16 @@
 // Written by Eric Goto, assignment from Princeton Coursera Algorithms course
 
 import edu.princeton.cs.algs4.Stack;
+import edu.princeton.cs.algs4.StdRandom;
 
 public class Board {
 
     private int size;
     private int[][] board;
+    private int tile1Row;
+    private int tile1Col;
+    private int tile2Row;
+    private int tile2Col;
 
     // initialize a board with n by n tiles
     public Board(int[][] tiles) {
@@ -16,9 +21,24 @@ public class Board {
         board = new int[size][size];
 
         // create a copy of the input array for immutability
-        for (int k = 0; k < size; k++)
-            for (int j = 0; j < size; j++)
+        for (int k = 0; k < size; k++) {
+            for (int j = 0; j < size; j++) {
                 board[k][j] = tiles[k][j];
+            }
+        }
+
+        // initialize random coordinates for the twin
+        tile1Row = StdRandom.uniform(size);
+        tile1Col = StdRandom.uniform(size);
+        tile2Row = StdRandom.uniform(size);
+        tile2Col = StdRandom.uniform(size);
+
+        while (board[tile1Row][tile1Col] == 0 || board[tile2Row][tile2Col] == 0 || board[tile1Row][tile1Col] == board[tile2Row][tile2Col]) {
+            tile1Row = StdRandom.uniform(size);
+            tile1Col = StdRandom.uniform(size);
+            tile2Row = StdRandom.uniform(size);
+            tile2Col = StdRandom.uniform(size);
+        }
     }
 
 
@@ -165,7 +185,19 @@ public class Board {
 
     // returns a board that is created by exchanging any pair of tiles
     public Board twin() {
-        return null;
+
+        int temp = board[tile1Row][tile1Col];
+        board[tile1Row][tile1Col] = board[tile2Row][tile2Col];
+        board[tile2Row][tile2Col] = temp;
+
+        Board twinBoard = new Board(board);
+
+        // bring board back to its original state
+        temp = board[tile1Row][tile1Col];
+        board[tile1Row][tile1Col] = board[tile2Row][tile2Col];
+        board[tile2Row][tile2Col] = temp;
+
+        return twinBoard;
     }
 
     // for testing
@@ -187,6 +219,7 @@ public class Board {
         Board c = new Board(test1);
 
         System.out.println(c.hamming()); // should return 1
+        System.out.println(c.twin());
         //System.out.println(c.toString());
         //System.out.println(c.isGoal());
 
