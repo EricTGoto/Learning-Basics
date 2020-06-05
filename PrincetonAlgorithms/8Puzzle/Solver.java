@@ -4,10 +4,10 @@ import edu.princeton.cs.algs4.Stack;
 // This solver will employ the A* algorithm to solve the 8 puzzle
 public class Solver {
 
-    private MinPQ<SearchNode> pq;
-    private int moves;
+
     private SearchNode goalNode;
     private Board initialBoard;
+    private int moves;
 
     private class SearchNode implements Comparable<SearchNode> {
         private Board board;
@@ -45,7 +45,7 @@ public class Solver {
     public Solver(Board initial) {
         if (initial == null) throw new IllegalArgumentException("Argument is null");
 
-        pq = new MinPQ<>();
+        MinPQ<SearchNode> pq = new MinPQ<>();
         Iterable<Board> neighbors = null;
         initialBoard = initial;
         moves = 0;
@@ -54,6 +54,12 @@ public class Solver {
         SearchNode deleted = pq.delMin();
 
         while (true) {
+            // If the board corresponding to the searchNode we deleted is solved then break out of loop
+            if (deleted.board.isGoal()) {
+                goalNode = deleted;
+                break;
+            }
+
             neighbors = deleted.board.neighbors();
 
             for (Board b : neighbors) {
@@ -64,21 +70,13 @@ public class Solver {
 
             moves = deleted.numberOfMoves + 1;
             deleted = pq.delMin();
-
-            if (deleted.board.isGoal()) {
-                goalNode = deleted;
-                break;
-            }
-            // System.out.println(deleted.priority);
         }
-
     }
 
     // returns true if the board is solvable
     public boolean isSolvable() {
         Board twin = initialBoard.twin();
         return false;
-
     }
 
     // returns the minimum number of boards to solve the board
@@ -97,7 +95,9 @@ public class Solver {
                 sequence.push(goalNode.board);
                 step--;
                 goalNode = goalNode.previous;
+                continue;
             }
+            goalNode = goalNode.previous;
         }
 
         return sequence;
