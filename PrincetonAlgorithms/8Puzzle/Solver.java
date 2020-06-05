@@ -5,8 +5,8 @@ import edu.princeton.cs.algs4.Stack;
 public class Solver {
 
     private MinPQ<SearchNode> pq;
-    private Stack<SearchNode> minNodes;
     private int moves;
+    private SearchNode goalNode;
     private Board initialBoard;
 
     private class SearchNode implements Comparable<SearchNode> {
@@ -44,7 +44,7 @@ public class Solver {
     // deleted node is the goal board.
     public Solver(Board initial) {
         if (initial == null) throw new IllegalArgumentException("Argument is null");
-        minNodes = new Stack<>();
+
         pq = new MinPQ<>();
         Iterable<Board> neighbors = null;
         initialBoard = initial;
@@ -52,8 +52,8 @@ public class Solver {
         // insert initial search node
         pq.insert(new SearchNode(initial, moves, null));
         SearchNode deleted = pq.delMin();
-        minNodes.push(deleted);
-        while (!deleted.board.isGoal()) {
+
+        while (true) {
             neighbors = deleted.board.neighbors();
 
             for (Board b : neighbors) {
@@ -64,7 +64,11 @@ public class Solver {
 
             moves = deleted.numberOfMoves + 1;
             deleted = pq.delMin();
-            minNodes.push(deleted);
+
+            if (deleted.board.isGoal()) {
+                goalNode = deleted;
+                break;
+            }
             // System.out.println(deleted.priority);
         }
 
@@ -85,13 +89,14 @@ public class Solver {
     // returns the sequence of moves if board is solvable, null if unsolvable
     public Iterable<Board> solution() {
         Stack<Board> sequence = new Stack<>();
-        int step = minNodes.peek().numberOfMoves;
+        int step = goalNode.numberOfMoves;
 
-        while (!minNodes.isEmpty()) {
-            SearchNode removed = minNodes.pop();
-            if (removed.numberOfMoves == step) {
-                sequence.push(removed.board);
+        while (goalNode != null) {
+
+            if (goalNode.numberOfMoves == step) {
+                sequence.push(goalNode.board);
                 step--;
+                goalNode = goalNode.previous;
             }
         }
 
