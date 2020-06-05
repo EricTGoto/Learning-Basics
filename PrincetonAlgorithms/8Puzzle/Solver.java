@@ -45,6 +45,7 @@ public class Solver {
         if (initial == null) throw new IllegalArgumentException("Argument is null");
 
         initialBoard = initial;
+
         if (!isSolvable()) {
             goalNode = null;
             moves = -1;
@@ -77,6 +78,8 @@ public class Solver {
         SearchNode deletedTwin = twinPQ.delMin();
         SearchNode deletedInitial = initialPQ.delMin();
 
+        moves = 0;
+
         while (true) {
 
             if (deletedTwin.board.isGoal()) return false;
@@ -84,6 +87,7 @@ public class Solver {
                 twinPQ = null;
                 initialPQ = null;
                 goalNode = deletedInitial;
+                moves = deletedInitial.numberOfMoves;
                 return true;
             }
 
@@ -91,13 +95,13 @@ public class Solver {
             initialNeighbors = deletedInitial.board.neighbors();
 
             for (Board b : twinNeighbors) {
-                if (!b.equals(deletedTwin.board)) {
+                if (deletedTwin.numberOfMoves == 0 || !b.equals(deletedTwin.previous.board)) {
                     twinPQ.insert(new SearchNode(b, deletedTwin.numberOfMoves + 1, deletedTwin));
                 }
             }
 
             for (Board b : initialNeighbors) {
-                if (!b.equals(deletedInitial.board)) {
+                if (deletedInitial.numberOfMoves == 0 || !b.equals(deletedInitial.previous.board)) {
                     initialPQ.insert(new SearchNode(b, deletedInitial.numberOfMoves + 1, deletedInitial));
                 }
             }
