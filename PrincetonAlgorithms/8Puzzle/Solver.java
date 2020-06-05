@@ -14,12 +14,14 @@ public class Solver {
         private int numberOfMoves;
         private SearchNode previous;
         private int priority;
+        private int manhattan;
 
         public SearchNode(Board board, int numberOfMoves, SearchNode previous) {
             this.board = board;
             this.numberOfMoves = numberOfMoves;
             this.previous = previous;
-            this.priority = board.manhattan() + numberOfMoves;
+            this.manhattan = board.manhattan();
+            this.priority = manhattan + numberOfMoves;
         }
 
         @Override
@@ -29,7 +31,7 @@ public class Solver {
             if (this.priority > x.priority) return 1;
             else if (this.priority < x.priority) return -1;
             else {
-                if (this.board.manhattan() > x.board.manhattan()) return 1;
+                if (this.manhattan > x.manhattan) return 1;
                 else return 0;
             }
         }
@@ -62,7 +64,6 @@ public class Solver {
 
             moves = deleted.numberOfMoves + 1;
             deleted = pq.delMin();
-
             minNodes.push(deleted);
             // System.out.println(deleted.priority);
         }
@@ -99,15 +100,15 @@ public class Solver {
 
     // testing
     public static void main(String[] args) {
-        int[][] test = {{8, 4, 7},
-                {1, 5, 6},
-                {3, 2, 0}};
+        int[][] test = {{1, 2, 3},
+                {0, 7, 6},
+                {5, 4, 8}};
 
         Board b = new Board(test);
         Solver s = new Solver(b);
-        for (Board board : s.solution()) {
-            System.out.println(board);
-            //System.out.println("priority " + );
+        for (Board a : s.solution()) {
+            System.out.println(a);
+            //System.out.println("priority " + a.numberOfMoves);
         }
     }
 }
