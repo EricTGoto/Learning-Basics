@@ -52,14 +52,6 @@ public class Solver {
             return;
         }
 
-        //moves = 0;
-        //MinPQ<SearchNode> pq = new MinPQ<>();
-
-        // insert initial search node
-        //pq.insert(new SearchNode(initial, moves, null));
-        //SearchNode deleted = pq.delMin();
-
-        // solver(deleted, pq);
     }
 
     // returns true if the board is solvable
@@ -138,29 +130,6 @@ public class Solver {
         }
 
         return sequence;
-    }
-
-    private void solver(SearchNode deleted, MinPQ<SearchNode> pq) {
-
-        Iterable<Board> neighbors;
-        while (true) {
-            // If the board corresponding to the searchNode we deleted is solved then break out of loop
-            if (deleted.board.isGoal()) {
-                goalNode = deleted;
-                break;
-            }
-
-            neighbors = deleted.board.neighbors();
-
-            for (Board b : neighbors) {
-                if (!b.equals(deleted.board)) {
-                    pq.insert(new SearchNode(b, deleted.numberOfMoves + 1, deleted));
-                }
-            }
-
-            moves = deleted.numberOfMoves + 1;
-            deleted = pq.delMin();
-        }
     }
 
     // testing
