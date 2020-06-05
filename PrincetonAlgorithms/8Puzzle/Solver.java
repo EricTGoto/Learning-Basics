@@ -98,7 +98,11 @@ public class Solver {
         while (true) {
 
             if (deletedTwin.board.isGoal()) return false;
-            else if (deletedInitial.board.isGoal()) return true;
+            else if (deletedInitial.board.isGoal()) {
+                twinPQ = null;
+                initialPQ = null;
+                return true;
+            }
 
             twinNeighbors = deletedTwin.board.neighbors();
             initialNeighbors = deletedInitial.board.neighbors();
@@ -128,20 +132,22 @@ public class Solver {
 
     // returns the sequence of moves if board is solvable, null if unsolvable
     public Iterable<Board> solution() {
-        if (goalNode == null) return null;
+
+        SearchNode goalCopy = new SearchNode(goalNode.board, goalNode.numberOfMoves, goalNode.previous);
+        if (goalCopy == null) return null;
 
         Stack<Board> sequence = new Stack<>();
-        int step = goalNode.numberOfMoves;
+        int step = goalCopy.numberOfMoves;
 
-        while (goalNode != null) {
+        while (goalCopy != null) {
 
-            if (goalNode.numberOfMoves == step) {
-                sequence.push(goalNode.board);
+            if (goalCopy.numberOfMoves == step) {
+                sequence.push(goalCopy.board);
                 step--;
-                goalNode = goalNode.previous;
+                goalCopy = goalCopy.previous;
                 continue;
             }
-            goalNode = goalNode.previous;
+            goalCopy = goalCopy.previous;
         }
 
         return sequence;
@@ -159,7 +165,7 @@ public class Solver {
 
         int[][] test2 = {{1, 0}, {2, 3}};
 
-        Board b = new Board(test3);
+        Board b = new Board(test);
         Solver s = new Solver(b);
         System.out.println(s.isSolvable());
         for (Board a : s.solution()) {
