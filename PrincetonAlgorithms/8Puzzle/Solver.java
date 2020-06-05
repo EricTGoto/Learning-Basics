@@ -45,16 +45,11 @@ public class Solver {
         if (initial == null) throw new IllegalArgumentException("Argument is null");
 
         initialBoard = initial;
-
-        if (!isSolvable()) {
-            goalNode = null;
-            moves = -1;
-            return;
-        }
-
+        isSolvable();
     }
 
     // returns true if the board is solvable
+    // Also does all the solving since when you check if a board is solvable you are also solving it
     public boolean isSolvable() {
         Board twin = initialBoard.twin();
 
@@ -74,8 +69,12 @@ public class Solver {
 
         while (true) {
 
-            if (deletedTwin.board.isGoal()) return false;
-            else if (deletedInitial.board.isGoal()) {
+            if (deletedTwin.board.isGoal()) {
+                goalNode = null;
+                moves = -1;
+                moves = -1;
+                return false;
+            } else if (deletedInitial.board.isGoal()) {
                 twinPQ = null;
                 initialPQ = null;
                 goalNode = deletedInitial;
