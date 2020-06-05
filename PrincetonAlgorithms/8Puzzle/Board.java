@@ -151,7 +151,6 @@ public class Board {
 
         Stack<Board> s = new Stack<Board>();
 
-
         // find the index of the 0
         int row = -1, col = 0; // row, col is location of 0
         for (int k = 0; k < size; k++) {
