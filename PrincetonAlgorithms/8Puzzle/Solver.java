@@ -51,32 +51,14 @@ public class Solver {
             return;
         }
 
-        MinPQ<SearchNode> pq = new MinPQ<>();
-        Iterable<Board> neighbors;
+        //moves = 0;
+        //MinPQ<SearchNode> pq = new MinPQ<>();
 
-        moves = 0;
         // insert initial search node
-        pq.insert(new SearchNode(initial, moves, null));
-        SearchNode deleted = pq.delMin();
+        //pq.insert(new SearchNode(initial, moves, null));
+        //SearchNode deleted = pq.delMin();
 
-        while (true) {
-            // If the board corresponding to the searchNode we deleted is solved then break out of loop
-            if (deleted.board.isGoal()) {
-                goalNode = deleted;
-                break;
-            }
-
-            neighbors = deleted.board.neighbors();
-
-            for (Board b : neighbors) {
-                if (!b.equals(deleted.board)) {
-                    pq.insert(new SearchNode(b, deleted.numberOfMoves + 1, deleted));
-                }
-            }
-
-            moves = deleted.numberOfMoves + 1;
-            deleted = pq.delMin();
-        }
+        // solver(deleted, pq);
     }
 
     // returns true if the board is solvable
@@ -101,6 +83,7 @@ public class Solver {
             else if (deletedInitial.board.isGoal()) {
                 twinPQ = null;
                 initialPQ = null;
+                goalNode = deletedInitial;
                 return true;
             }
 
@@ -133,8 +116,8 @@ public class Solver {
     // returns the sequence of moves if board is solvable, null if unsolvable
     public Iterable<Board> solution() {
 
+        if (goalNode == null) return null;
         SearchNode goalCopy = new SearchNode(goalNode.board, goalNode.numberOfMoves, goalNode.previous);
-        if (goalCopy == null) return null;
 
         Stack<Board> sequence = new Stack<>();
         int step = goalCopy.numberOfMoves;
@@ -151,6 +134,29 @@ public class Solver {
         }
 
         return sequence;
+    }
+
+    private void solver(SearchNode deleted, MinPQ<SearchNode> pq) {
+
+        Iterable<Board> neighbors;
+        while (true) {
+            // If the board corresponding to the searchNode we deleted is solved then break out of loop
+            if (deleted.board.isGoal()) {
+                goalNode = deleted;
+                break;
+            }
+
+            neighbors = deleted.board.neighbors();
+
+            for (Board b : neighbors) {
+                if (!b.equals(deleted.board)) {
+                    pq.insert(new SearchNode(b, deleted.numberOfMoves + 1, deleted));
+                }
+            }
+
+            moves = deleted.numberOfMoves + 1;
+            deleted = pq.delMin();
+        }
     }
 
     // testing
