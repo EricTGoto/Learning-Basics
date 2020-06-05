@@ -4,7 +4,6 @@ import edu.princeton.cs.algs4.Stack;
 // This solver will employ the A* algorithm to solve the 8 puzzle
 public class Solver {
 
-
     private SearchNode goalNode;
     private Board initialBoard;
     private int moves;
@@ -45,9 +44,16 @@ public class Solver {
     public Solver(Board initial) {
         if (initial == null) throw new IllegalArgumentException("Argument is null");
 
-        MinPQ<SearchNode> pq = new MinPQ<>();
-        Iterable<Board> neighbors = null;
         initialBoard = initial;
+        if (!isSolvable()) {
+            goalNode = null;
+            moves = -1;
+            return;
+        }
+
+        MinPQ<SearchNode> pq = new MinPQ<>();
+        Iterable<Board> neighbors;
+
         moves = 0;
         // insert initial search node
         pq.insert(new SearchNode(initial, moves, null));
@@ -76,8 +82,44 @@ public class Solver {
     // returns true if the board is solvable
     public boolean isSolvable() {
         Board twin = initialBoard.twin();
-        return false;
+
+        MinPQ<SearchNode> twinPQ = new MinPQ<>();
+        MinPQ<SearchNode> initialPQ = new MinPQ<>();
+
+        Iterable<Board> twinNeighbors;
+        Iterable<Board> initialNeighbors;
+
+        twinPQ.insert(new SearchNode(twin, 0, null));
+        initialPQ.insert(new SearchNode(initialBoard, 0, null));
+
+        SearchNode deletedTwin = twinPQ.delMin();
+        SearchNode deletedInitial = initialPQ.delMin();
+
+        while (true) {
+
+            if (deletedTwin.board.isGoal()) return false;
+            else if (deletedInitial.board.isGoal()) return true;
+
+            twinNeighbors = deletedTwin.board.neighbors();
+            initialNeighbors = deletedInitial.board.neighbors();
+
+            for (Board b : twinNeighbors) {
+                if (!b.equals(deletedTwin.board)) {
+                    twinPQ.insert(new SearchNode(b, deletedTwin.numberOfMoves + 1, deletedTwin));
+                }
+            }
+
+            for (Board b : initialNeighbors) {
+                if (!b.equals(deletedInitial.board)) {
+                    initialPQ.insert(new SearchNode(b, deletedInitial.numberOfMoves + 1, deletedInitial));
+                }
+            }
+
+            deletedTwin = twinPQ.delMin();
+            deletedInitial = initialPQ.delMin();
+        }
     }
+
 
     // returns the minimum number of boards to solve the board
     public int moves() {
@@ -86,6 +128,8 @@ public class Solver {
 
     // returns the sequence of moves if board is solvable, null if unsolvable
     public Iterable<Board> solution() {
+        if (goalNode == null) return null;
+
         Stack<Board> sequence = new Stack<>();
         int step = goalNode.numberOfMoves;
 
@@ -109,8 +153,15 @@ public class Solver {
                 {0, 7, 6},
                 {5, 4, 8}};
 
-        Board b = new Board(test);
+        int[][] test3 = {{1, 2, 3},
+                {4, 6, 5},
+                {7, 8, 0}};
+
+        int[][] test2 = {{1, 0}, {2, 3}};
+
+        Board b = new Board(test3);
         Solver s = new Solver(b);
+        System.out.println(s.isSolvable());
         for (Board a : s.solution()) {
             System.out.println(a);
             //System.out.println("priority " + a.numberOfMoves);
